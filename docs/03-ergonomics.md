@@ -14,7 +14,9 @@ Humans are the fixed reference every prop is judged against. Replace "eyeballed"
 
 Design principle (Dreyfuss): design for the **2.5th–97.5th percentile band**, not the average — "must reach it" sizes to the small end, "must fit through it" sizes to the large end.
 
-**Practice**: keep a 1.7 m reference figure (even a simple capsule) permanently in the scene and render every prop next to it. Most scale errors are invisible on an isolated model and obvious next to a human.
+**Modern data note**: anthropometry drifts (the *secular trend* — populations have grown several cm since the mid-century surveys behind Dreyfuss/Neufert). The current reference dataset is **ANSUR II (2012, publicly available)**; use it when a dimension is percentile-critical. The *ratios* above are stable; the absolute stature you plug in should match your target population/era.
+
+**Practice**: keep a 1.7 m reference figure (even a simple capsule) permanently in the scene and render every prop next to it. Most scale errors are invisible on an isolated model and obvious next to a human. This is the manual form of **Digital Human Modeling** (RAMSIS / Jack / Santos — industry now validates reach, sightlines, and clearance against posed digital manikins *before* any prototype exists). Upgrade path when a prop is interaction-critical: pose a rigged figure actually grasping the handle / standing on the rung, instead of just standing beside it.
 
 ## Ladders (climbing equipment)
 

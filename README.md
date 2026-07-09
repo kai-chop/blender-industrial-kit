@@ -9,17 +9,19 @@ This is not a Blender tutorial. It is a set of design rules, canonical dimension
 > **Generic modeling skill does not produce industrial-looking products. Discipline does.**
 > Industrial products look right because they obey manufacturing grammar (a process can only produce certain shapes), ergonomic standards (humans have fixed sizes), and engineering verification culture (drawings are checked from multiple views, assemblies are checked for interference). Import those systems instead of reinventing them by trial and error.
 
+The kit deliberately mixes two eras of that culture: the century-old foundations (drawing conventions, anthropometry, weldment practice) and their modern successors — **Model-Based Definition** (the script is the master, everything else is derived), **DfAM and injection-molding grammar** (why current products look organic or shell-ribbed), and **CI-style verification** (gates on every change, golden-image regression). The old layer explains what "correct" looks like; the modern layer makes checking it automatic.
+
 ## What's inside
 
 | Path | Content |
 |---|---|
 | [docs/01-core-principles.md](docs/01-core-principles.md) | BOM-first, parameter dictionary, datum placement, part/assembly separation, derivation rules |
-| [docs/02-cad-discipline.md](docs/02-cad-discipline.md) | Design intent, topological-naming trap, chain vs. baseline dimensioning, linked duplicates, scale-apply rules |
-| [docs/03-ergonomics.md](docs/03-ergonomics.md) | Anthropometry and canonical dimension tables (ladders, tables, chairs, stairs, handrails, grips) |
-| [docs/04-manufacturing-grammar.md](docs/04-manufacturing-grammar.md) | Process→shape mapping: sheet metal, extrusion, casting; joint vocabulary; why "box-modeling a ladder" fails |
-| [docs/05-edges-curves-fillets.md](docs/05-edges-curves-fillets.md) | Polygon counts for circles, bevel/fillet/chamfer semantics, curve continuity (G0/G1/G2), catenary vs. parabola |
-| [docs/06-terminal-conditions.md](docs/06-terminal-conditions.md) | End treatment of members: trim/miter/cope, burrs and flash, interference, coordinate frames for mating parts |
-| [docs/07-verification.md](docs/07-verification.md) | Two-layer verification: mechanical gates (BOM audit, interference volume, dimension asserts) + mandatory multi-view visual review |
+| [docs/02-cad-discipline.md](docs/02-cad-discipline.md) | Design intent, topological-naming trap, chain vs. baseline dimensioning, linked duplicates, scale-apply rules, MBD & code-CAD |
+| [docs/03-ergonomics.md](docs/03-ergonomics.md) | Anthropometry and canonical dimension tables (ladders, tables, chairs, stairs, handrails, grips); ANSUR II and digital human modeling |
+| [docs/04-manufacturing-grammar.md](docs/04-manufacturing-grammar.md) | Process→shape mapping: sheet metal, extrusion, casting, CNC, injection molding, additive/topology-optimized; joint vocabulary; grammar by era |
+| [docs/05-edges-curves-fillets.md](docs/05-edges-curves-fillets.md) | Polygon counts for circles, bevel/fillet/chamfer semantics, curve continuity (G0/G1/G2), catenary vs. parabola, geometry vs. normal-map split |
+| [docs/06-terminal-conditions.md](docs/06-terminal-conditions.md) | End treatment of members: trim/miter/cope, burrs and flash, interference, fits as named clearances, coordinate frames for mating parts |
+| [docs/07-verification.md](docs/07-verification.md) | Two-layer verification: mechanical gates (BOM audit, interference volume, dimension asserts) + mandatory multi-view visual review; CI and golden-image regression |
 | [docs/08-never-list.md](docs/08-never-list.md) | Absolute-never mistakes — the failures that must not reach human review |
 | [docs/09-checklists.md](docs/09-checklists.md) | Condensed checklists: before / during / verify / hand-off |
 | [scripts/](scripts/) | Working headless reference scripts (interference gate, BOM audit, ortho renders, parametric ladder example) |

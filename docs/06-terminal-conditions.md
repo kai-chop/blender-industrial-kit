@@ -10,6 +10,8 @@ Declare, per assembly, which members are *through* (continuous) and which are *t
 - Diagonal members get an angle cut (miter) — same operation, inclined plane. **Share one miter plane between both members and they are guaranteed flush.**
 - Result: flush (face-on-face) contact or an explicit clearance (e.g., 0.1 mm fitting gap). Never an overlap, never a protrusion.
 
+A declared clearance is the modeling equivalent of a **fit class** (ISO 286: clearance / transition / interference fits, e.g. H7/g6). You don't need the tables — you need the stance: every gap between mating parts is a *chosen number with a name in the parameter dictionary* (`RUNG_CLEAR = 0.0005`), never a leftover.
+
 ## Burrs and flash: the sub-millimeter protrusion is a defect
 
 Engineering definition: a *burr* is unintended material projecting past an edge after processing; *flash* is molding material leaked at the parting line. Real products ship **deburred** (edge condition is even a drawing callout — ISO 13715). Therefore:

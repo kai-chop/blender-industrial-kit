@@ -42,6 +42,14 @@ Before declaring any model complete, render and *look at*:
 
 Make the renders a fixed pipeline step emitted by a script (`scripts/render_orthos.py`) so "did we look at it?" is never a memory question. Wireframe overlay helps expose penetrations and floating parts.
 
+## Principle 3.5: Automate both layers as CI + golden-image regression
+
+Modern software practice closes the loop the drawing office never could: run the gates **on every change, mechanically**.
+
+- Wire the mechanical gates (BOM, interference, dimensions) into pre-commit hooks or CI — exit codes make them free to run and impossible to forget. The generator being code (doc 02, MBD) is what makes this possible.
+- The visual layer automates as **golden-image regression**: keep the approved ortho renders in the repo as baselines; after any change, re-render and diff (pixel or perceptual, e.g. SSIM) against the baseline. Zero diff = nothing moved that shouldn't have; a diff *localizes* what changed and demands one human look, exactly where. The eyes-on-first-approval is still human — automation only guards against *silent* regressions afterwards.
+- Real precedent from this kit: the interference gate passed a ladder whose rungs floated clear of the rails (nothing touched → nothing overlapped). The **side-view ortho render** caught it in one glance. Numeric gates and image comparison are complementary, not redundant.
+
 ## Principle 4: Verify the derivation, not just the endpoints
 
 When deriving variant B from canonical A (e.g., a taller ladder), cross-check the derivation math itself two independent ways — closed-form recomputation vs. interpolation between anchors. Sub-millimeter agreement between two derivations is strong evidence; one derivation checked against itself is none.

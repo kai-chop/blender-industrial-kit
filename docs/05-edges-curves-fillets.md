@@ -13,6 +13,16 @@ An n-gon approximating a circle sags below the true radius by `r · (1 − cos(�
 
 Don't blindly accept the default 32. Typical LOD chain: 32 → 16 → 8 → 6.
 
+## Geometry budget is a modern engineering decision, not a compromise
+
+Real-time pipelines split "shape" from "shading" deliberately:
+
+- **Silhouette detail** (anything visible against the background: rung count, profile shape, big fillets) must be geometry — no shader can fix a silhouette.
+- **Non-silhouette detail** (small bevels, knurling, serrations, layer lines, weld texture) belongs in **normal maps** — either baked from a high-poly pass or produced by a **bevel shader node** at render time.
+- The modern workflow is *high-poly → bake → low-poly*: model edge treatments once at full fidelity, transfer them to the game-res mesh as a texture. A weighted-normals pass on the low-poly kills most shading artifacts without extra geometry.
+
+Decide per edge: "does this read in silhouette at the nearest camera?" Yes → geometry; no → map. This is the same by-camera-distance logic as segment counts, extended to all detail.
+
 ## Every real edge is beveled
 
 **Perfectly sharp edges do not exist on manufactured products** — and they catch no highlight, which is a large part of why unbeveled CG looks cheap. Standard treatment:

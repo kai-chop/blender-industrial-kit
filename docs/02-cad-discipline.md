@@ -1,6 +1,6 @@
 # 02 — CAD Discipline, Translated to Blender Python
 
-Parametric CAD spent decades learning how models break under change. Borrow the conclusions.
+Parametric CAD spent decades learning how models break under change. Borrow the conclusions — both the classic ones and the modern ones (MBD, code-CAD, CI).
 
 ## Design intent
 
@@ -38,6 +38,14 @@ Float error plus a parameter tweak turned chain-placed rungs into visibly scatte
 1. Build the part at real-world size; `transform_apply(scale=True)` **once, at part definition**.
 2. Never apply transforms on objects sharing a datablock — it deforms all instances.
 3. Never leave non-1.0 scale on export-bound objects: bevel widths, modifier distances, physics, and FBX/OBJ export all read it differently than the viewport suggests.
+
+## Model-Based Definition: the script is the single source of truth
+
+Modern engineering has retired the drawing as master document. **MBD** (ASME Y14.41 / ISO 16792, exchanged as STEP AP242 with embedded PMI) makes the annotated 3D model the *only* authoritative artifact — drawings, if any, are generated views. The script-modeling translation is direct:
+
+- **The generator script + parameter dictionary is the master.** The `.blend`, the FBX, the renders are *derived artifacts* — never hand-edit them; regenerate. A hand-tweaked vertex in a derived file is the modern equivalent of red-penning a print and not updating the model.
+- This is the **code-CAD** stance (OpenSCAD / CadQuery / Build123d lineage): geometry as code means the model is **diffable, reviewable, and version-controlled**. Two lines of git diff on `PARAMS` tells a reviewer more than two screenshots.
+- Since the model is code, it gets code's quality machinery: the verification gates (doc 07) run headless in **CI on every change**, not "when someone remembers."
 
 ## Comments carry the drawing's job
 

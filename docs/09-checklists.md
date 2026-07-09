@@ -5,7 +5,7 @@ The operational condensation of docs 01–08. Run them in order; each item is me
 ## A. Before geometry (design)
 
 - [ ] **BOM written** — part × qty × parent × build-method (new / linked duplicate). For modifications: measured scene BOM taken first.
-- [ ] **Process tag per part** — sheet / extrusion / casting / machined. Only tag-legal shapes will be built.
+- [ ] **Process tag per part** — sheet / extrusion / casting / machined / molded / printed. Only tag-legal shapes will be built; process mix consistent with the product's era.
 - [ ] **Parameter dictionary** — every driving dimension in one dict, each with unit + source comment (standard, measurement, or derivation).
 - [ ] **Datums declared** — floor, centerlines, inclined planes as named constants.
 - [ ] **Through/trimmed hierarchy declared** — which members are continuous, which trim to them (BOM column).
@@ -22,6 +22,7 @@ The operational condensation of docs 01–08. Run them in order; each item is me
 - [ ] Joints modeled (rivet boss / bolt head / weld bead); micro-detail (serration, knurl) to textures.
 - [ ] Visible edges beveled (~1–3 mm, 2 segments) + auto smooth.
 - [ ] Circle segments chosen by camera distance (8/16/32), not default.
+- [ ] Detail split by silhouette test: silhouette-visible → geometry; the rest → normal map / bevel shader (doc 05).
 
 ## C. Verification (mechanical layer — separate script, fresh artifact read)
 
@@ -40,6 +41,7 @@ The operational condensation of docs 01–08. Run them in order; each item is me
 - [ ] **Human-scale render** next to a 1.7 m reference figure, reviewed.
 - [ ] Curved/reflective surfaces: **Matcap pass** for highlight breaks.
 - [ ] No completion claim before all four are actually looked at. Asserts green ≠ done.
+- [ ] Approved renders stored as **golden baselines**; subsequent changes diffed against them (regression, doc 07).
 
 ## E. Hand-off (export / deployment)
 

@@ -23,6 +23,24 @@ The source of "industrial-looking": **a manufacturing process can only produce c
 
 ### Machining (tag: `machined`)
 - Prismatic/rotational features, sharp-ish internal corners limited by tool radius, chamfered entries.
+- Modern CNC specifics: **internal corners always carry a radius = tool radius** (a sharp internal pocket corner is unmanufacturable on a mill — model the radius or the corner reads as fake). Pocket depth ≲ 4 × tool diameter; undercuts imply 5-axis or a second setup, so most parts show only 3-axis-reachable features.
+
+### Injection molding (tag: `molded`)
+The dominant grammar of modern consumer products (tool housings, ladder feet, chair shells, casings):
+- **Uniform wall thickness 1–3 mm** — thick solid regions sink and warp, so "solid-looking" plastic parts are actually shells with **ribs** underneath (rib thickness ≈ 50–60 % of wall, to hide sink marks).
+- Draft 0.5–2° on faces along the pull direction; **bosses** around screw holes; visible **parting line**, ejector-pin circles, and a gate scar on hidden faces.
+- Joint vocabulary of its own: **snap-fits and living hinges** instead of fasteners — two molded parts clip together with no visible screws on the A-side.
+- Blender: model the outer shell at wall thickness (Solidify), add rib lattices on the inside only where a close-up shows them; parting line as a faint edge loop.
+
+### Additive / 3D printing (tag: `printed`)
+The one modern process whose grammar is *organic*, and the reason many current parts look nothing like century-old ones:
+- Legal shapes: internal lattices, conformal channels, **topology-optimized "bone-like" forms** — material only along load paths (Bendsøe & Sigmund; generative-design tools automate this). No draft, no uniform-wall constraint.
+- Its own constraints instead: **~45° overhang rule** (steeper needs support, leaving witness marks), minimum feature ≈ 0.8 mm (FDM), visible **layer stratification** along one build axis (a texture/normal-map detail, oriented consistently).
+- The discipline still applies: an organic printed bracket is *not* an arbitrary blob — its ribs follow force flow between mounting points. Organic shape without load-path logic is the modern version of box-modeling grammar.
+
+## Choose the grammar by era and price point
+
+A prop's process mix dates it: mid-century industrial = sheet + casting + rivets; current consumer = molded shells + snap-fits + a few printed or machined accents; structural/heavy = extrusion + weld, unchanged for a century. Mixing eras on one product (a cast-iron body with living hinges) reads as wrong even to viewers who can't say why.
 
 ## Joints are parts too
 

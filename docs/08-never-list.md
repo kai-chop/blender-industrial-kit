@@ -16,19 +16,21 @@ Defects that must **never reach human review**. Each entry is phrased as the rev
 7. **Uniformly scaled variants** — the tall version with thick rails and stretched rung spacing. Reads as a toy blow-up. (Rule: regenerate with fixed sections and fixed pitch, doc 01.)
 8. **Ergonomic impossibilities** — rungs a leg can't span, handles a hand can't close on, guardrails at knee height, tables at chest height. (Gate: canonical tables, doc 03; render next to reference figure.)
 9. **Process-impossible shapes** — "sheet metal" with varying wall thickness, an "extrusion" with bumps along its length, parts touching with no visible joint. (Rule: process tags, doc 04.)
+10. **Organic shape with no load-path logic** — a "generative-looking" blob whose ribs connect nothing to nothing. Real topology-optimized parts route material between mounting points and loads; fake ones are instantly suspicious. (Rule: `printed` grammar, doc 04.)
+11. **Era-mixed process grammar** — living hinges on a cast-iron body, snap-fits on riveted sheet. Each process combination dates a product; mixing eras reads as wrong even to viewers who can't articulate why. (Rule: grammar-by-era, doc 04.)
 
 ## Physics & curves
 
-10. **Hand-drawn hanging ropes/chains** — Bézier guesses instead of catenary. Physically false at a glance. (Rule: evaluate `cosh`, doc 05.)
+12. **Hand-drawn hanging ropes/chains** — Bézier guesses instead of catenary. Physically false at a glance. (Rule: evaluate `cosh`, doc 05.)
 
 ## Process (how work is reported)
 
-11. **"Done" without evidence** — completion claims with no executed check attached. Every claim ships with the command that proves it and its result.
-12. **Single-view confidence** — declaring the model correct from one render (or zero renders, from asserts alone). Three orthos + joint close-up + human-scale shot, every time.
-13. **Generator self-verification** — the build script grading its own output. Independent script, fresh read of the artifact, expected-value comparison.
-14. **Exit-0-as-proof** — treating "the tool ran without error" as "the content is right."
-15. **Silent substitution of the requested verification** — if the reviewer asked to check X in a specific way, do exactly that; substituting an "equivalent" easier check is how defects ship. If a check was skipped, say "unverified (reason)" and state when it will be verified — never let it float.
-16. **Unlabeled assumptions** — writing an expectation ("this should bind texture A") as if it were a verified fact. If it can be checked with one command, check it; otherwise label it *assumption*.
+13. **"Done" without evidence** — completion claims with no executed check attached. Every claim ships with the command that proves it and its result.
+14. **Single-view confidence** — declaring the model correct from one render (or zero renders, from asserts alone). Three orthos + joint close-up + human-scale shot, every time.
+15. **Generator self-verification** — the build script grading its own output. Independent script, fresh read of the artifact, expected-value comparison.
+16. **Exit-0-as-proof** — treating "the tool ran without error" as "the content is right."
+17. **Silent substitution of the requested verification** — if the reviewer asked to check X in a specific way, do exactly that; substituting an "equivalent" easier check is how defects ship. If a check was skipped, say "unverified (reason)" and state when it will be verified — never let it float.
+18. **Unlabeled assumptions** — writing an expectation ("this should bind texture A") as if it were a verified fact. If it can be checked with one command, check it; otherwise label it *assumption*.
 
 ## Why the process items are on a geometry list
 
