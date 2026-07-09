@@ -1,0 +1,5 @@
+# Generated artifacts — regenerate with scripts/example_parametric_ladder.py
+output/
+*.blend
+*.blend1
+*.log
