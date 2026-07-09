@@ -26,6 +26,10 @@ The kit deliberately mixes two eras of that culture: the century-old foundations
 | [docs/09-checklists.md](docs/09-checklists.md) | Condensed checklists: before / during / verify / hand-off |
 | [scripts/](scripts/) | Working headless reference scripts (interference gate, BOM audit, ortho renders, parametric ladder example) |
 | [reference/bibliography.md](reference/bibliography.md) | Books and standards this kit borrows from (primary sources) |
+| [skills/blender-engineering/SKILL.md](skills/blender-engineering/SKILL.md) | Claude Code skill — 4-stage pipeline wiring, engineering-sheet template, gate commands, and docs-to-role index |
+| [agents/blender-dossier.md](agents/blender-dossier.md) | Claude Code agent — Stage 0: researches real-world product knowledge and produces a sourced dossier |
+| [agents/blender-designer.md](agents/blender-designer.md) | Claude Code agent — Stage 1: generates 3–5 design counter-proposals with tradeoffs; never converges |
+| [agents/blender-modeler.md](agents/blender-modeler.md) | Claude Code agent — Stage 3: implements the engineering sheet as a Blender Python script and runs all verification gates |
 
 ## Quick start
 
@@ -37,6 +41,19 @@ blender --background --python scripts/verify_interference.py -- --blend output/l
 ```
 
 Scripts target Blender 4.x and use only bundled modules (`bpy`, `bmesh`, `mathutils`) — no add-ons required. The interference and trim techniques were specifically validated headless: `BVHTree.overlap`, boolean `EXACT` intersect volume, and `bmesh.ops.bisect_plane` replace the interference-detection / weldment-trim features of commercial CAD without any add-on.
+
+## Claude Code integration
+
+The kit ships a skill definition and three agent definitions that wire the docs into a role-separated pipeline for Claude Code. The four roles — dossier researcher, design divergence generator, engineering-sheet author (main session), and Blender modeler — each read only the docs relevant to their stage, preventing context overload and keeping dimensional decisions in the judgment layer.
+
+**Install:** copy `skills/blender-engineering/` to `~/.claude/skills/` and `agents/*.md` to `~/.claude/agents/`. Then open each agent file and replace every occurrence of `{{KIT_PATH}}` with the absolute path of your kit clone.
+
+| Stage | Role | Deliverable |
+|---|---|---|
+| 0 — Dossier | `blender-dossier` agent | `dossier-<product>.md` with sourced dimensions, part census, manufacturing grammar, and modeling risks |
+| 1 — Design divergence | `blender-designer` agent | 3–5 counter-proposals with tradeoffs; never converges |
+| 2 — Engineering sheet | Main session (judgment layer) | Filled template: PARAMS, datums, BOM, terminal conditions, verification plan |
+| 3 — Build & verify | `blender-modeler` agent | Generator script + `.blend` + all three gate commands at exit 0 + PNG renders |
 
 ## The five failure classes this kit exists to prevent
 
