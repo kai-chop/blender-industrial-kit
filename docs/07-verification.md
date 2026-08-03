@@ -15,6 +15,38 @@ Rules:
 - Verify **content against expected values**, not existence: packed texture pixel dimensions, byte size, checksum — "the file is there" and "hasTex=True" prove nothing.
 - Exit code 0 from a pipeline tool is evidence the tool *ran*, not that the output is *right*.
 
+## Principle 1.5: The gate never outranks the requirement source
+
+Verification answers two different questions, and their authority differs:
+
+- **(a) What is** — measurements of the world (behaviour, dimensions, causes). Measurement beats
+  anyone's words, including the requirement-holder's guesses.
+- **(b) What is wanted** — the shape or behaviour the requirement-holder asked for. Here the
+  requirement-holder's words and drawings **are** the ground truth. Gate expectations are
+  transcriptions of that source and hold no authority over it.
+
+Observed instance (2026-08-04, wrestling-ring fittings): the user supplied a full exploded drawing
+and the instruction 「説明のまんまにしてね」. The verifier's expected values had been transcribed from
+the builder's own engineering sheet, not from the drawing — so 65/65 PASS certified only
+self-consistency, while three shape violations against the drawing shipped (part count, open-hook
+jaw, welded-ring protrusion). The green gate was then held up against the user's words.
+
+Rules:
+
+- Transcribe expected values from the requirement source (drawings, verbatim user words) and cite
+  the source per criterion. A gate fed from the builder's own interpretation is Principle 1's
+  self-verification one level up — the *reading* checks itself instead of the *generator*.
+- If the requirement-holder's words and a green gate disagree, in requirement space the gate is
+  stale by definition. Fix the gate; never shelve the words because "the checks pass."
+- When new requirement material arrives, re-derive everything it depicts — its authority covers its
+  whole extent, not just the part currently under discussion.
+- Requirement conditions are shapes (jaw angle, protrusion, part count), not booleans — "is it
+  open?" is satisfiable by a 28° slit that reads as a snap-ring, not a hook.
+- Criticism and counter-proposals about the requested shape are input to the requirement-holder's
+  decision, never license to build a different "correct" shape.
+- The cost of inverting this hierarchy is not rework but trust: the requirement-holder moves the
+  work elsewhere.
+
 ## Principle 2: Mechanical layer (what scripts assert)
 
 | Gate | Method |
