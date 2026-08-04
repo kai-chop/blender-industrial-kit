@@ -24,6 +24,7 @@ The kit deliberately mixes two eras of that culture: the century-old foundations
 | [docs/07-verification.md](docs/07-verification.md) | Two-layer verification: mechanical gates (BOM audit, interference volume, dimension asserts) + mandatory multi-view visual review; CI and golden-image regression |
 | [docs/08-never-list.md](docs/08-never-list.md) | Absolute-never mistakes — the failures that must not reach human review |
 | [docs/09-checklists.md](docs/09-checklists.md) | Condensed checklists: before / during / verify / hand-off |
+| [docs/10-architectural-structure.md](docs/10-architectural-structure.md) | Building scale: member hierarchy, load path, lateral systems, span/depth tables, long-span arena roofs, seating-bowl C-value, AESS connections and coatings |
 | [scripts/](scripts/) | Working headless reference scripts (interference gate, BOM audit, ortho renders, parametric ladder example) |
 | [reference/bibliography.md](reference/bibliography.md) | Books and standards this kit borrows from (primary sources) |
 | [skills/blender-engineering/SKILL.md](skills/blender-engineering/SKILL.md) | Claude Code skill — 4-stage pipeline wiring, engineering-sheet template, gate commands, and docs-to-role index |
