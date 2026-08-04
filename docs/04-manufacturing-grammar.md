@@ -73,3 +73,5 @@ For architectural-scale members, section size has a canonical relationship to sp
 - Lay the column grid first (uniform spacing), size beams from span, then detail.
 
 A member whose thickness has no span-derived justification will look wrong — too thin reads as fragile, too thick reads as toy. Leave a one-line comment deriving each section from its span.
+
+Beyond these proportions, building scale has its own grammar — member hierarchy, load path, lateral systems, long-span roofs, seating bowls, exposed-steel connections and coatings. See [10-architectural-structure.md](10-architectural-structure.md).
