@@ -16,6 +16,11 @@ Each operator exists because a real build shipped a defect that the existing gat
                         cycles. Counting by name prefix is one command, and the count is what
                         gets compared to the drawing.
 
+  kit.mold_check        doc 04 states the moulding grammar (draft 0.5-3 deg by process, uniform
+                        1-3 mm wall, no undercuts) but nothing measured whether a model obeyed
+                        it, and the extension catalogue has no draft/undercut/thickness tool at
+                        all. Thresholds are doc 04's published ranges, exposed as parameters.
+
 All three are callable from `bpy.ops` under `--background`, print machine-readable lines to
 stdout, and never modify mesh data. `frame_feature` is the only one that writes anything, and
 only to a camera's transform / lens.
@@ -27,6 +32,7 @@ import bmesh
 import bpy
 from bpy_extras.object_utils import world_to_camera_view
 from mathutils import Vector
+from mathutils.bvhtree import BVHTree
 
 TAG = "[kit-inspect]"
 
@@ -243,7 +249,123 @@ def count_triangles(obj, depsgraph):
     return total
 
 
-CLASSES = (KIT_OT_camera_coverage, KIT_OT_frame_feature, KIT_OT_part_census)
+class KIT_OT_mold_check(bpy.types.Operator):
+    """Draft angle, undercuts and wall thickness against a pull direction"""
+
+    bl_idname = "kit.mold_check"
+    bl_label = "Mold Check"
+    bl_options = {"REGISTER"}
+
+    prefix: bpy.props.StringProperty(name="Name prefix", default="")
+    axis: bpy.props.EnumProperty(
+        name="Pull axis",
+        description="Direction the mold halves separate along",
+        items=[("X", "X", ""), ("Y", "Y", ""), ("Z", "Z", "")],
+        default="Z",
+    )
+    # Defaults are the published ranges in kit doc 04, not numbers invented here:
+    # draft — sand casting 1-3 deg, die casting 0.5-2, injection 0.5-2;
+    # wall  — injection moulding 1-3 mm, and uniform is the point, not the absolute value.
+    min_draft: bpy.props.FloatProperty(name="Minimum draft (deg)", default=1.0, min=0.0, max=45.0)
+    wall_min: bpy.props.FloatProperty(name="Minimum wall (m)", default=0.001, min=0.0)
+    wall_max: bpy.props.FloatProperty(name="Maximum wall (m)", default=0.003, min=0.0)
+
+    def execute(self, context):
+        targets = resolve_targets(context.scene, self.prefix)
+        if not targets:
+            self.report({"ERROR"}, "no mesh objects match prefix %r" % self.prefix)
+            return {"CANCELLED"}
+
+        pull = Vector((1.0 if self.axis == "X" else 0.0,
+                       1.0 if self.axis == "Y" else 0.0,
+                       1.0 if self.axis == "Z" else 0.0))
+        depsgraph = context.evaluated_depsgraph_get()
+        failures = 0
+        for obj in targets:
+            report = inspect_mold(obj, depsgraph, pull, self.min_draft,
+                                  self.wall_min, self.wall_max)
+            if report is None:
+                continue
+            flat, undercut, thin, thick, worst_draft, wall_lo, wall_hi = report
+            bad = flat + undercut + thin + thick
+            failures += bad
+            print("%s mold %-16s axis=%s  under-drafted=%d  undercut=%d  wall<%.3f=%d  "
+                  "wall>%.3f=%d  worst_draft=%.2fdeg  wall=[%.4f,%.4f]"
+                  % (TAG, obj.name, self.axis, flat, undercut, self.wall_min, thin,
+                     self.wall_max, thick, worst_draft, wall_lo, wall_hi))
+
+        summary = "%d face(s) fail draft/undercut/wall across %d object(s)" % (
+            failures, len(targets))
+        print("%s mold summary: %s" % (TAG, summary))
+        self.report({"WARNING"} if failures else {"INFO"}, summary)
+        return {"FINISHED"}
+
+
+def inspect_mold(obj, depsgraph, pull, min_draft, wall_min, wall_max):
+    """Per-face mold diagnosis for one object, in world space.
+
+    Draft is the angle between a face and the parting plane, so a face parallel to the pull
+    direction has zero draft and cannot release: draft = asin(|normal . pull|).
+
+    A face releases only if nothing else on the part sits between it and the outside along its
+    own half's pull direction — that occlusion test is what separates a real undercut from a
+    merely steep face, and it needs a ray, not a normal.
+
+    Wall thickness is the distance from a face inward to the first surface it meets, which is
+    what "uniform wall" in doc 04 actually constrains.
+    """
+    evaluated = obj.evaluated_get(depsgraph)
+    mesh = evaluated.to_mesh()
+    if mesh is None or not mesh.polygons:
+        if mesh is not None:
+            evaluated.to_mesh_clear()
+        return None
+
+    bm = bmesh.new()
+    bm.from_mesh(mesh)
+    bm.transform(obj.matrix_world)
+    bm.faces.ensure_lookup_table()
+    tree = BVHTree.FromBMesh(bm)
+
+    # Offset ray origins off the surface so a face never reports hitting itself.
+    epsilon = max(bm.calc_volume(signed=False) ** (1.0 / 3.0), 1e-4) * 1e-3
+    flat = undercut = thin = thick = 0
+    worst_draft = 90.0
+    wall_lo, wall_hi = float("inf"), 0.0
+
+    for face in bm.faces:
+        normal = face.normal
+        if normal.length_squared == 0.0:
+            continue
+        normal = normal.normalized()
+        centre = face.calc_center_median()
+
+        draft = math.degrees(math.asin(min(abs(normal.dot(pull)), 1.0)))
+        worst_draft = min(worst_draft, draft)
+        if draft < min_draft:
+            flat += 1
+
+        release = pull if normal.dot(pull) >= 0.0 else -pull
+        if tree.ray_cast(centre + normal * epsilon, release)[0] is not None:
+            undercut += 1
+
+        hit, _, _, distance = tree.ray_cast(centre - normal * epsilon, -normal)
+        if hit is not None:
+            wall_lo = min(wall_lo, distance)
+            wall_hi = max(wall_hi, distance)
+            if distance < wall_min:
+                thin += 1
+            elif distance > wall_max:
+                thick += 1
+
+    bm.free()
+    evaluated.to_mesh_clear()
+    if wall_lo == float("inf"):
+        wall_lo = 0.0
+    return flat, undercut, thin, thick, worst_draft, wall_lo, wall_hi
+
+
+CLASSES = (KIT_OT_camera_coverage, KIT_OT_frame_feature, KIT_OT_part_census, KIT_OT_mold_check)
 
 
 def register():
