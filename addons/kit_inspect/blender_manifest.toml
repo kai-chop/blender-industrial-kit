@@ -1,0 +1,13 @@
+schema_version = "1.0.0"
+
+id = "kit_inspect"
+name = "Kit Inspect"
+version = "0.1.0"
+tagline = "Headless checks: camera coverage, judgeable size, part census"
+maintainer = "blender-industrial-kit"
+type = "add-on"
+
+license = ["SPDX:GPL-3.0-or-later"]
+blender_version_min = "4.2.0"
+
+tags = ["Render", "Camera", "Modeling"]
