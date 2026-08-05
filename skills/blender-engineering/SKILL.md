@@ -9,6 +9,26 @@ description: Four-stage pipeline for industrial-product modeling in Blender — 
 
 If the kit is not installed on the current machine, skip the `docs/` references and run the pipeline with general knowledge, noting the gap in the dossier output.
 
+> **Rules carry IDs; `RULES.md` next to this file says where each came from and whether it may be enforced.** `[U*]` = the user confirmed it. `[C*]` = an inference — a working default, advisory, **never a pass/fail gate** until the user promotes it. Retiring a rule = flip its status in `RULES.md` and delete its line here; no incident narrative is left behind in this file.
+
+## Stage −1: fix the requirement source before anything else
+
+**Two questions, two different authorities. Confusing them is how this pipeline fails.**
+
+| Question | Ground truth | Who wins |
+|---|---|---|
+| (a) What *is* — behaviour, dimension, cause | measurement | measurement beats anyone's words, including the user's guesses |
+| (b) What is *wanted* — the shape to build | **the user's words and drawings** | the user, axiomatically. No measurement exists in this space `[U1]` |
+
+Before Stage 0, write the **requirement register** `[C1]`: every artefact carrying (b) — image paths, verbatim user sentences — one line each on what it governs.
+
+- `[U2]` When new requirement material arrives mid-build, its authority covers **everything it depicts**, not just the part under discussion. Re-derive that whole extent; demote your earlier readings to hypotheses.
+- `[U3]` If two artefacts conflict, **ask** — do not invent a compromise reading.
+- `[U4]` Criticism and counter-proposals about the requested shape are input to the user's decision, never licence to build a different "correct" shape.
+- `[U5]` **Never turn something the user has not confirmed into a pass/fail condition.** Your reading of a drawing is a hypothesis: write it down as a question, not a spec line, and do not invent numbers to fill it (angles, margins, tolerances). An invented value that reaches a gate or a handoff document is the same failure as an invented shape.
+
+Every sheet row carries its source, and sources are of exactly two kinds: `src: <image/quote>` from the requirement register (**binding**), or `src: <catalogue/standard/measurement>` from (a) (binding only where the user has not spoken — photographic appearance outranks catalogue dimensions when the user says so). A row you cannot cite is **not specified yet** — go ask. An uncited row is exactly the thing that later passes every gate and fails the user.
+
 ## Trigger conditions
 
 Apply this skill when:
@@ -29,7 +49,7 @@ Do NOT apply for single-dimension tweaks, material swaps, or UV-only edits — g
 **Skipping rules:**
 - Stages 0 and 1 may be skipped with explicit written justification (e.g., "product geometry is well-established, dossier not needed" or "user has specified the form").
 - Stages 2 and 3 are **never skippable**.
-- Visual review of renders is the human's and main session's responsibility — an agent's "PASS" report covers only mechanical gate exit codes, not visual correctness.
+- **Judgement of the shape** — is this what was asked for — is the human's and main session's responsibility; an agent's "PASS" covers mechanical gate exit codes, not requirement conformance. But `[U8]` the agent that produced the renders **opens them first**, and `[C5]` sweeps them for objective defects only (never-list 1–6). That look is a pre-flight, not a verdict: it reports a defect list or "none of the listed defects found", never "looks good".
 
 ## Engineering-sheet template (Stage 2 deliverable — never omit)
 
@@ -66,7 +86,8 @@ CENTER_X = 0
 - BOM audit: declared BOM in scene["bom_json"] matches script PARAMS
 - Interference: zero undeclared overlap volume (declared unions whitelisted); rung–rail gap = RUNG_CLEAR exactly — floating is caught by the side-view render, not this gate (see note below)
 - Dimension asserts: RUNG_PITCH between rungs within tolerance
-- Renders: front / side / top ortho + human-scale figure
+- Renders: front / side / top ortho + iso (form) + human-scale figure — all five opened and swept
+- Requirement conformance (axis B below): each expectation transcribed from the requirement register with its citation
 ```
 
 **Rule:** If any field cannot be filled, design is not settled — return to Stage 0 or 1. Do not hand an incomplete sheet to the modeler.
@@ -88,7 +109,23 @@ blender --background --python {{KIT_PATH}}/scripts/render_orthos.py \
         -- --blend <output>.blend --out <renders_dir>
 ```
 
-After all three exit 0, the session's judgment layer and the user review the PNG renders. Approved renders are saved as a golden baseline; subsequent changes are regression-checked against them.
+`render_orthos.py` emits the set never-list #14 requires — `ortho_front/side/top`, `view_iso` (perspective 3/4: orthos give dimensions, only this gives form), `view_scale` (1.7 m reference figure, doc 03). **Then `[U8]` open them.** Sweep for never-list 1–6 and for framing sanity — an empty or clipped frame means the render proved nothing. Doc 09's checklist D also wants a close-up per joint class; that cannot be framed generically, so it comes from a feature-framing operator where the feature names are known.
+
+After all three gates exit 0 **and the renders have been looked at**, the session's judgment layer and the user review them. Approved renders are saved as a golden baseline; subsequent changes are regression-checked against them.
+
+## Stage 3, axis B — requirement conformance (the axis gates miss)
+
+Exit 0 proves the tool *ran*, not that the output is *right*, and axis A ("is the model self-coherent") cannot answer "is this the thing that was asked for". Independence from the generator is not enough either — a gate written from your own sheet is self-verification one level up.
+
+- `[U6]` Expectations are transcribed **from the requirement register**, each assert carrying its citation. An expectation transcribed from your own sheet certifies only that you built what you decided to build.
+- `[U7]` **If a green gate disagrees with the user's words, the gate is stale by definition.** Fix the gate. Never shelve the user's words because "the checks pass".
+- `[C2]` Conditions want to be **shapes, not booleans** — "is the hook open?" is satisfiable by a 28° slit that reads as a snap ring. But the shape values themselves are `[U5]`: ask, do not supply them.
+- `[C3]` A feature judged at a few pixels has not been looked at. Render each judged feature large enough to decide before claiming visual confirmation, and check the target is actually in frame — an off-frame target produces the "nothing changed" render.
+- `[C4]` Run the part census against the **source image** as well as the sheet: count what the drawing shows between each pair of named parts.
+
+## Live MCP sessions, where available
+
+Where an interactive Blender MCP bridge is configured (viewport screenshots, scene queries, arbitrary `bpy` execution), use it to **look and diagnose, not to author**. Doc 02's MBD rule stands: the generator script is the master, so anything found in a live session goes back into the script and is re-run headless — a model poked into shape interactively is unreproducible. Note that such bridges need a GUI Blender with the add-on running; they do not work under `--background`.
 
 ## Real-world note: why numeric gates and visual review are complementary
 

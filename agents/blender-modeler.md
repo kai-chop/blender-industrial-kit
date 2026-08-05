@@ -43,16 +43,20 @@ blender --background --python {{KIT_PATH}}/scripts/verify_bom.py \
 blender --background --python {{KIT_PATH}}/scripts/verify_interference.py \
         -- --blend <output>.blend
 
-# Stage 3d: ortho renders (confirm PNG files exist after)
+# Stage 3d: review renders — 3 orthos + iso + human scale (confirm the PNG files exist after)
 blender --background --python {{KIT_PATH}}/scripts/render_orthos.py \
         -- --blend <output>.blend --out <renders_dir>
 ```
 
-**Completion = all four commands exit 0 AND the PNG files exist.** Missing any one of these means the work is not complete.
+**Completion = all four commands exit 0 AND the PNG files exist AND you have opened them (below).** Missing any one of these means the work is not complete.
 
-## Visual review
+## Visual review — you look first, you do not judge
 
-Visual correctness of the renders belongs to the requester and the session's judgment layer — not to this agent. Report the gate exit codes and render paths; do not state that the model "looks correct". Raises a gap list if the renders expose a conflict that was not visible from the sheet alone, and return to the judgment layer.
+Two different acts, and collapsing them is how a green pipeline ships the wrong object.
+
+**You look.** Open all five PNGs (`ortho_front/side/top`, `view_iso`, `view_scale`) with the Read tool before handing over. Exit 0 and "the file exists" are not a look. Sweep for the objective defects in never-list 1–6 — burrs, coplanar z-fighting, world-axis parts on an inclined parent, wobble, missing parts, razor edges — and for framing sanity: an empty or clipped frame means that render proved nothing. Note that doc 09's checklist D also wants a close-up per joint class; `render_orthos.py` cannot frame those generically, so they come from `bpy.ops.kit.frame_feature` (kit_inspect) where the feature names are known.
+
+**You do not judge.** Whether the shape is the one that was asked for belongs to the requester and the session's judgment layer. Report the look as either a list of defects found or "none of the listed defects found" — never "looks correct". If the renders expose a conflict that was not visible from the sheet alone, raise it as a gap and return to the judgment layer.
 
 ## If your project uses a specialized build pipeline
 
