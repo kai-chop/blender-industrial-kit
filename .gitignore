@@ -3,3 +3,7 @@ output/
 *.blend
 *.blend1
 *.log
+
+# Python bytecode from running the add-ons in place
+__pycache__/
+*.pyc
