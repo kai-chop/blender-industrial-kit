@@ -57,12 +57,31 @@ VOLUME_TOL = 1e-9  # m^3 — below this is float noise
 
 
 def _args():
+    """Returns (blend_path, extra_whitelist). Extra pairs come from, additively:
+      --whitelist "Spoke:Hub,Tyre:Rim"   (prefix pairs, colon-separated)
+      scene["union_whitelist"]           (same syntax, written by the generator)
+    The module constant above stays the base set; nothing is removed."""
     argv = sys.argv
+    blend = None
+    extra = set()
     if "--" in argv:
         argv = argv[argv.index("--") + 1:]
         if "--blend" in argv:
-            return argv[argv.index("--blend") + 1]
-    return None
+            blend = argv[argv.index("--blend") + 1]
+        if "--whitelist" in argv:
+            extra |= _parse_whitelist(argv[argv.index("--whitelist") + 1])
+    return blend, extra
+
+
+def _parse_whitelist(text):
+    out = set()
+    for item in text.split(","):
+        item = item.strip()
+        if not item:
+            continue
+        a, b = item.split(":")
+        out.add(tuple(sorted((a.strip(), b.strip()))))
+    return out
 
 
 def _prefix(name):
@@ -95,9 +114,15 @@ def _intersect_volume(a, b, depsgraph):
 
 
 def main():
-    blend = _args()
+    blend, extra = _args()
     if blend:
         bpy.ops.wm.open_mainfile(filepath=blend)
+    scene_wl = bpy.context.scene.get("union_whitelist")
+    if scene_wl:
+        extra |= _parse_whitelist(scene_wl)
+    whitelist = UNION_WHITELIST | extra
+    if extra:
+        print(f"[interference] extra whitelist pairs={len(extra)}")
 
     depsgraph = bpy.context.evaluated_depsgraph_get()
     objs = [o for o in bpy.context.scene.objects if o.type == "MESH"]
@@ -109,7 +134,7 @@ def main():
         for j in range(i + 1, len(objs)):
             a, b = objs[i], objs[j]
             key = tuple(sorted((_prefix(a.name), _prefix(b.name))))
-            if key in UNION_WHITELIST:
+            if key in whitelist:
                 skipped += 1
                 continue
             checked += 1
