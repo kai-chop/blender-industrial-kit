@@ -144,3 +144,4 @@ An interference gate once passed a ladder whose rungs floated clear of the rails
 | `docs/07-verification.md` | Two-layer verification: mechanical gates + mandatory multi-view visual review; CI and golden-image regression | everyone |
 | `docs/08-never-list.md` | Absolute-never mistakes — the failures that must not reach human review | everyone (read before starting) |
 | `docs/09-checklists.md` | Condensed checklists: before / during / verify / hand-off | modeler, main session |
+| `docs/12-photo-mastered-modelling.md` | Read first when the requirement source is photographs of a real product: official-photo acquisition, circle-fit scale, landmark key list, camera-limited rows, angles from oblique photos, photo-residual gates, delegation costs (GT 29 / Kink BMX evidence) | main session (stage 0 brief, stage 2 sheet), dossier, measuring agent |
